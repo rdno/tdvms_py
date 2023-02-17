@@ -101,7 +101,7 @@ def filter_stations_by_rectangle(stations, north_latitude, west_longitude,
 def split_into_batches(stations, batch_size=50):
     """Split the stations into batches to request the data by parts"""
     total_length = len(stations)
-    n = total_length // 50 + 1
+    n = total_length // batch_size + 1
     k, m = divmod(total_length, n)
     return [stations[i * k + min(i, m):(i + 1) * k + min(i + 1, m)]
             for i in range(n)]
