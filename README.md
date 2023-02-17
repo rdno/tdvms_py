@@ -70,3 +70,9 @@ selection
 There seems to be a server side limitation to requests. You might want
 to request only 50 stations at a time. You can submit another request
 after you get the data via e-mail.
+
+
+## Known issues
+
+ - Hybrid stations are not fully supported (only one type of
+   instrument will be used. Priority: `H` > `L` > `N`).
