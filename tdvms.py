@@ -148,14 +148,14 @@ def request_data(stations, starttime, endtime, data_type, email):
                       json=data)
 
     if r.status_code == 200:
-        print("Response:")
-        print(r.content)
+        # print("Response:")
+        # print(r.content)
         data = json.loads(r.content.decode())
         if data["Result"] == 111:
             raise Exception("You might need to wait for your previous request!")  # NOQA
         elif data["Result"] == 110:
             raise Exception("General Error")
         else:
-            print("You might get an e-mail soon.")
+            print("Data request successful! You might get an e-mail soon.")
     else:
         raise Exception(f"Data request failed with status code: {r.status_code}")  # NOQA
