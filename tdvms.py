@@ -98,6 +98,18 @@ def filter_stations_by_rectangle(stations, north_latitude, west_longitude,
     return new_stations
 
 
+def filter_stations_by_name(stations, selected_station_names):
+    """Filter stations based on the stations names
+    Station names should be `network.station_code` (e.g., TK.3126, KO.DKL)
+    """
+    new_stations = []
+    for sta in stations:
+        full_name = f"{sta['network']}.{sta['code']}"
+        if full_name in selected_station_names:
+            new_stations.append(sta)
+    return new_stations
+
+
 def split_into_batches(stations, batch_size=50):
     """Split the stations into batches to request the data by parts"""
     total_length = len(stations)
