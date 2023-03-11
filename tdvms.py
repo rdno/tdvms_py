@@ -131,11 +131,32 @@ def filter_stations_by_name(stations, selected_station_names):
     """Filter stations based on the stations names
     Station names should be `network.station_code` (e.g., TK.3126, KO.DKL)
     """
+    if not isinstance(selected_station_names, list):
+        selected_station_names = [selected_station_names]
+
     new_stations = []
     for sta in stations:
         full_name = f"{sta['network']}.{sta['code']}"
         if full_name in selected_station_names:
             new_stations.append(sta)
+    return new_stations
+
+
+def filter_stations_by_device_type(stations, device_codes):
+    """Filter station by device type:
+
+    H => High Gain Seismometer
+    L => Low Gain Seismometer
+    N => Accelerometer
+    """
+    if not isinstance(device_codes, list):
+        device_codes = [device_codes]
+
+    new_stations = []
+    for sta in stations:
+        for code in device_codes:
+            if sta["device"+code]:
+                new_stations.append(sta)
     return new_stations
 
 
