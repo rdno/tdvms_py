@@ -69,17 +69,17 @@ def plot_stations(stations, fig=None, ax=None,
     return fig, ax
 
 
-def filter_stations_by_distance(stations, origin_latitude, origin_longitude,
-                                dist_km):
+def filter_stations_by_circle(stations, origin_latitude, origin_longitude,
+                              min_dist_km, max_dist_km):
     """Filter stations in a circle defined by
-    an origin point and maximum distance (km)"""
+    an origin point, mininum and maximum distances"""
     new_stations = []
     for sta in stations:
         sta_dist_m, _, _ = calc_vincenty_inverse(
             origin_latitude, origin_longitude,
             sta["latitude"], sta["longitude"])
         sta_dist_km = sta_dist_m / 1000.0
-        if sta_dist_km <= dist_km:
+        if min_dist_km <= sta_dist_km <= max_dist_km:
             new_stations.append(sta)
 
     return new_stations

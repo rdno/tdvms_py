@@ -53,11 +53,12 @@ class DownloadConfig:
             for sel_type, args in selection.items():
                 if sel_type == "circle":
                     if not isinstance(args, dict):
-                        raise Exception("Circle selection needs latitude, longitude and dist_km arguments.")  # NOQA
+                        raise Exception("Circle selection needs latitude, longitude, min_dist_km, and max_dist_km arguments.")  # NOQA
                     try:
                         self.circle_selection = (args["latitude"],
                                                  args["longitude"],
-                                                 args["dist_km"])
+                                                 args["min_dist_km"],
+                                                 args["max_dist_km"])
                     except KeyError as e:
                         raise Exception(f"Circle selection needs argument: {e}")  # NOQA
                 elif sel_type == "rectangle":
@@ -116,7 +117,7 @@ class DownloadConfig:
         self.validate_networks()
         stations = tdvms.get_stations(self.networks)
         if self.circle_selection:
-            stations = tdvms.filter_stations_by_distance(
+            stations = tdvms.filter_stations_by_circle(
                 stations, *self.circle_selection)
         if self.rectangle_selection:
             stations = tdvms.filter_stations_by_rectangle(

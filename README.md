@@ -51,7 +51,8 @@ selection:
   circle:
     latitude: 37.224
     longitude: 37.4700
-    dist_km: 200
+    min_dist_km: 0
+    max_dist_km: 200
 ```
 
 ```yaml
