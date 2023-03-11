@@ -40,9 +40,38 @@ def get_stations(networks):
                             "component": ""})
 
     if r.status_code == 200:
-        return json.loads(r.content.decode())
+        stations = json.loads(r.content.decode())
+        return expand_hybrid_stations(stations)
     else:
         raise Exception(f"Fetching stations failed with status code: {r.status_code}")  # NOQA
+
+
+def expand_hybrid_stations(stations):
+    """To request data multiple data type from hybrid stations, you
+    need to act like they are different stations. This function
+    expands the hybrid stations into their device_type counter parts.
+    """
+    devices = ["deviceH", "deviceL", "deviceN"]
+    new_stations = []
+    for sta in stations:
+        number_of_device_types = sum(int(sta[d]) for d in devices)
+        if number_of_device_types > 1:
+            no_device_sta = sta.copy()
+            for device in devices:
+                no_device_sta[device] = False
+                for c in "ZEN":
+                    no_device_sta[device+c] = False
+
+            for device in devices:
+                if sta[device]:
+                    new_sta = no_device_sta.copy()
+                    new_sta[device] = True
+                    for c in "ZEN":
+                        new_sta[device+c] = True
+                    new_stations.append(new_sta)
+        else:
+            new_stations.append(sta)
+    return new_stations
 
 
 def plot_stations(stations, fig=None, ax=None,
