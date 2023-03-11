@@ -1,4 +1,4 @@
-# A client for downloading continous data from AFAD TDVMS
+# A client for downloading continuous data from AFAD TDVMS
 
 Python function for downloading data from [AFAD TDVMS](https://tdvms.afad.gov.tr/continuous_data).
 
@@ -56,7 +56,7 @@ selection:
 ```
 
 ```yaml
-selection
+selection:
   rectangle:
     north_latitude: 39.8183
     west_longitude: 34.7887
@@ -65,6 +65,7 @@ selection
 ```
 
 ```yaml
+selection:
   name:
     - "TK.3140"
     - "TK.3141"
