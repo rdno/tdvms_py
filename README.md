@@ -43,7 +43,7 @@ networks:
  - "TU"
 ```
 
-`selection`: can be `circle` and/or `rectangle`
+`selection`: can be one or multiple of `circle`,`rectangle` and `name`.
 
 Examples:
 ```yaml
@@ -61,6 +61,13 @@ selection
     west_longitude: 34.7887
     south_latitude: 37.4961
     east_longitude: 43.8576
+```
+
+```yaml
+  name:
+    - "TK.3140"
+    - "TK.3141"
+    - "TK.3143"
 ```
 
 `batch_size`: number of station to request at once. 50 is recommended.
