@@ -38,14 +38,21 @@ ax.set_title("TK Stations")
 origin_latitude = 37.5600
 origin_longitude = 37.4700
 
-stations = tdvms.filter_stations_by_distance(
-    stations, origin_latitude, origin_longitude, 200)
+stations = tdvms.filter_stations_by_circle(
+    stations, origin_latitude, origin_longitude,
+    min_dist_km=0, max_dist_km=200)
 fig, ax = tdvms.plot_stations(stations, show=False)
 ax.set_title("Stations after distance filtering")
 
 # stations = tdvms.filter_stations_by_rectangle(
 #     stations, 39.8183, 34.7887, 37.49619, 43.857630)
-# fig, ax = tdvms.plot_stations(stations, show=True)
+# fig, ax = tdvms.plot_stations(stations, show=False)
+# ax.set_title("Stations after rectangle filtering")
+
+
+# stations = tdvms.filter_stations_by_name(stations, ["TK.2308", "TK.4412", "TK.4631"])
+# fig, ax = tdvms.plot_stations(stations, show=False)
+# ax.set_title("Stations after name filtering")
 
 batches = tdvms.split_into_batches(stations, batch_size=50)
 
