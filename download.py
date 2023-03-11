@@ -49,6 +49,7 @@ class DownloadConfig:
         self.circle_selection = None
         self.rectangle_selection = None
         self.name_selection = None
+        self.device_type_selection = None
         if isinstance(selection, dict):
             for sel_type, args in selection.items():
                 if sel_type == "circle":
@@ -76,6 +77,13 @@ class DownloadConfig:
                     if not isinstance(args, list) or len(args) == 0:
                         raise Exception("Name selection should be a list of names")  # NOQA
                     self.name_selection = args
+                elif sel_type == "device_type":
+                    if not isinstance(args, list) or len(args) == 0:
+                        raise Exception("Device type selection should be a list")  # NOQA
+                    for d in args:
+                        if d not in "HLN":
+                            raise Exception(f"Unknown device type: {d}")
+                    self.device_type_selection = args
                 else:
                     raise Exception(f"Unknown selection type: {sel_type}")
             self.selection = selection
@@ -125,6 +133,9 @@ class DownloadConfig:
         if self.name_selection:
             stations = tdvms.filter_stations_by_name(
                 stations, self.name_selection)
+        if self.device_type_selection:
+            stations = tdvms.filter_stations_by_device_type(
+                stations, self.device_type_selection)
         self.stations = stations
         batches = tdvms.split_into_batches(self.stations,
                                            self.batch_size)

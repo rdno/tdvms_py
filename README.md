@@ -43,7 +43,7 @@ networks:
  - "TU"
 ```
 
-`selection`: can be one or multiple of `circle`,`rectangle` and `name`.
+`selection`: can be one or multiple of `circle`,`rectangle`, `name`, and `device_type`.
 
 Examples:
 ```yaml
@@ -72,6 +72,14 @@ selection:
     - "TK.3143"
 ```
 
+```yaml
+selection:
+  device_type:
+    - "H"
+    - "L"
+    - "N"
+```
+
 `batch_size`: number of station to request at once. 50 is recommended.
 
 ## Notes
@@ -79,9 +87,3 @@ selection:
 There seems to be a server side limitation to requests. You might want
 to request only 50 stations at a time. You can submit another request
 after you get the data via e-mail.
-
-
-## Known issues
-
- - Hybrid stations are not fully supported (only one type of
-   instrument will be used. Priority: `H` > `L` > `N`).
