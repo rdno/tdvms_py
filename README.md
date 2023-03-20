@@ -1,8 +1,14 @@
 # A client for downloading continuous data from AFAD TDVMS
 
-Python function for downloading data from [AFAD TDVMS](https://tdvms.afad.gov.tr/continuous_data).
+Python scripts for downloading data from [AFAD TDVMS](https://tdvms.afad.gov.tr/continuous_data).
 
 You can find an example usage in `example.py`.
+
+## Install required packages
+
+```console
+  $ pip install -r requirements.txt
+```
 
 ## Download Script (`download.py`)
 
@@ -13,7 +19,7 @@ TK network stations within the 200 km of the epicenter.
 
 Usage:
 
-```shell
+```console
   $ ./download.py config_file.yml me@university.edu
 ```
 
