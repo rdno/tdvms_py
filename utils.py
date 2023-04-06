@@ -9,6 +9,17 @@ import requests
 import os
 import time
 import yaml
+import json
+
+
+def load_json(filename):
+    with open(filename) as f:
+        return json.load(f)
+
+
+def dump_json(filename, data):
+    with open(filename, "w") as f:
+        json.dump(data, f, sort_keys=True, indent=2)
 
 
 def load_yaml(filename):

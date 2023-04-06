@@ -38,6 +38,25 @@ def update_state(name, requested, filehash):
     utils.dump_yaml(state_filename, {"hash": filehash, "requested": requested})
 
 
+def _get_cached_values(use_cache, filename, download_func, *args, **kwargs):
+    if use_cache and os.path.isfile(filename):
+        return utils.load_json(filename)
+    else:
+        data = download_func(*args, **kwargs)
+        utils.dump_json(filename, data)
+        return data
+
+
+def get_stations(networks, use_cache=True):
+    return _get_cached_values(use_cache, "./stations.json",
+                              tdvms.get_stations, networks)
+
+
+def get_networks(use_cache=True):
+    return _get_cached_values(use_cache, "./networks.json",
+                              tdvms.get_networks)
+
+
 class DownloadConfig:
     def __init__(self,
                  networks, selection,
@@ -112,16 +131,17 @@ class DownloadConfig:
         else:
             raise Exception(f"Batch size should be an integer: {batch_size}")
 
-    def validate_networks(self):
-        networks = tdvms.get_networks()
+    def validate_networks(self, use_cache=True):
+        networks = get_networks(use_cache)
         network_codes = [net["code"] for net in networks]
         for net in self.networks:
             if net not in network_codes:
                 raise Exception(f"Invalid network {net}")
 
-    def select_stations(self):
-        self.validate_networks()
-        stations = tdvms.get_stations(self.networks)
+    def select_stations(self, use_cache=True):
+        self.validate_networks(use_cache)
+        stations = get_stations([net["code"] for net in get_networks()],
+                                use_cache)
         if self.circle_selection:
             stations = tdvms.filter_stations_by_circle(
                 stations, *self.circle_selection)
@@ -161,6 +181,8 @@ if __name__ == "__main__":
                         help="Plot stations before downloading")
     parser.add_argument("--use-imap-email", metavar="creds.yml",
                         help="Use IMAP to check your e-mails.")
+    parser.add_argument("--refresh-stations", action="store_true",
+                        help="Download stations even if a local copy exists.")
     args = parser.parse_args()
     filename = args.filename
     config = DownloadConfig(**utils.load_yaml(filename))
@@ -172,8 +194,8 @@ if __name__ == "__main__":
     # check checkpoint file
     requested = check_cur_state(name, filehash)
     # fetch stations
-    print("Downloading station list...")
-    config.select_stations()
+    print("Constructing station list...")
+    config.select_stations(not args.refresh_stations)
     # Print some info...
     n_batches = len(config.batches)
     print(f"Number of stations: {len(config.stations)}")
