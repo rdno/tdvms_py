@@ -89,23 +89,23 @@ selection:
 `batch_size`: number of station to request at once. 50 is recommended.
 
 
-### Auto download from the e-mail
+### Auto download from e-mail
 
 You can also use `IMAP` to check your e-mail and download the linked
 zip file automatically using `utils.check_imap_email` function.
 
-`download.py` can also take a yaml file which includes the login
-credentials using `--use-imap-email` flag.
+`download.py` can also use this feature by using a yaml file which
+includes the login credentials (`--use-imap-email` flag).
 
-Example yaml file:
+Example IMAP yaml file:
 ```yaml
 imap_url: "imap.university.edu"
 username: "me@university.edu"
 password: "mysecretpassword"
 ```
 
-If you are using Gmail you might need to create `App Password`
-password. More info [here](https://support.google.com/accounts/answer/185833).
+If you are using Gmail, you might need to create an `App
+Password`. More info can be found [here](https://support.google.com/accounts/answer/185833).
 
 
 ## Notes
