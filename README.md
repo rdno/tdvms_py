@@ -7,7 +7,7 @@ You can find an example usage in `example.py`.
 ## Install required packages
 
 ```console
-  $ pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ## Download Script (`download.py`)
@@ -20,7 +20,7 @@ TK network stations within the 200 km of the epicenter.
 Usage:
 
 ```console
-  $ ./download.py config_file.yml me@university.edu
+$ ./download.py config_file.yml me@university.edu
 ```
 
 To avoid the possible bans, data requests are manual. Pressing enter
@@ -87,6 +87,25 @@ selection:
 ```
 
 `batch_size`: number of station to request at once. 50 is recommended.
+
+
+### Auto download from the e-mail
+
+You can also use `IMAP` to check your e-mail and download the linked
+zip file automatically using `utils.check_imap_email` function.
+
+`download.py` can also take a yaml file which includes the login credentials.
+
+Example:
+```yaml
+imap_url: "imap.university.edu"
+username: "me@university.edu"
+password: "mysecretpassword"
+```
+
+If you are using Gmail you might need to create `App Password`
+password. More info [here](https://support.google.com/accounts/answer/185833).
+
 
 ## Notes
 

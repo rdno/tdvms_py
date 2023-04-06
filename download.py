@@ -6,20 +6,19 @@ Ridvan Orsvuran, 2023
 """
 
 import tdvms
-import yaml
+import utils
 import argparse
 import datetime
 import os
 import hashlib
+import time
 
 
 def check_cur_state(name, filehash):
     """Returns number of requested batches"""
     state_filename = f"{name}_state.yml"
     if os.path.isfile(state_filename):
-        with open(state_filename) as f:
-            state = yaml.safe_load(f)
-
+        state = utils.load_yaml(state_filename)
         # If config file changed, you might want to reset?
         if state["hash"] != filehash:
             ans = input("Config file seem to be changed! Do you want to reset the state? [y/n] ")  # NOQA
@@ -36,8 +35,7 @@ def check_cur_state(name, filehash):
 
 def update_state(name, requested, filehash):
     state_filename = f"{name}_state.yml"
-    with open(state_filename, "w") as f:
-        yaml.safe_dump({"hash": filehash, "requested": requested}, f)
+    utils.dump_yaml(state_filename, {"hash": filehash, "requested": requested})
 
 
 class DownloadConfig:
@@ -161,8 +159,7 @@ if __name__ == "__main__":
     parser.add_argument("email", help="email address")
     args = parser.parse_args()
     filename = args.filename
-    with open(filename) as f:
-        config = DownloadConfig(**yaml.safe_load(f))
+    config = DownloadConfig(**utils.load_yaml(filename))
 
     name = ".".join(args.filename.split("/")[-1].split(".")[:-1])
     # compute hash of the config file to detect possible changes
@@ -178,16 +175,36 @@ if __name__ == "__main__":
     print(f"Number of stations: {len(config.stations)}")
     print(f"Total batches: {n_batches}")
     print(f"Previously requested batches: {requested}, Remaining: {n_batches-requested}")  # NOQA
+    update_state(name, requested, filehash)
     # Plot the stations?
     should_plot = input("Plot Stations? [y/n] ")
     if should_plot == "y":
         config.plot_stations()
 
+    use_imap_email = input("Use auto e-mail check via IMAP? [y/n] ")
+    if use_imap_email == "y":
+        try:
+            imap_settings = utils.IMAPSettings(**utils.load_yaml("creds.yml"))
+        except IOError:
+            print("Create a `creds.yml` file with the following keys: `imap_url`, `username`, `password`.")
+            exit(1)
+        use_imap_email = True
+    else:
+        use_imap_email = False
+
     while requested < n_batches:
-        print("")
-        input("Press enter to request the next batch! ")
-        print("")
+        if not use_imap_email:
+            print("")
+            input("Press enter to request the next batch! ")
+            print("")
         print("Requesting...")
-        config.download(requested, args.email)
-        requested += 1
-        update_state(name, requested, filehash)
+        try:
+            config.download(requested, args.email)
+            requested += 1
+            update_state(name, requested, filehash)
+            if use_imap_email:
+                utils.check_imap_email(imap_settings)
+        except tdvms.TDVMSException as e:
+            print("ERROR occured:", e)
+            print("Waiting for a minute.")
+            time.sleep(60)
