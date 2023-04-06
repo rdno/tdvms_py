@@ -94,9 +94,10 @@ selection:
 You can also use `IMAP` to check your e-mail and download the linked
 zip file automatically using `utils.check_imap_email` function.
 
-`download.py` can also take a yaml file which includes the login credentials.
+`download.py` can also take a yaml file which includes the login
+credentials using `--use-imap-email` flag.
 
-Example:
+Example yaml file:
 ```yaml
 imap_url: "imap.university.edu"
 username: "me@university.edu"

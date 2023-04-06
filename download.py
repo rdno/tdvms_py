@@ -157,6 +157,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download data")
     parser.add_argument("filename", help="config file")
     parser.add_argument("email", help="email address")
+    parser.add_argument("--plot", action="store_true",
+                        help="Plot stations before downloading")
+    parser.add_argument("--use-imap-email", metavar="creds.yml",
+                        help="Use IMAP to check your e-mails.")
     args = parser.parse_args()
     filename = args.filename
     config = DownloadConfig(**utils.load_yaml(filename))
@@ -176,18 +180,14 @@ if __name__ == "__main__":
     print(f"Total batches: {n_batches}")
     print(f"Previously requested batches: {requested}, Remaining: {n_batches-requested}")  # NOQA
     update_state(name, requested, filehash)
+
     # Plot the stations?
-    should_plot = input("Plot Stations? [y/n] ")
-    if should_plot == "y":
+    if args.plot:
         config.plot_stations()
 
-    use_imap_email = input("Use auto e-mail check via IMAP? [y/n] ")
-    if use_imap_email == "y":
-        try:
-            imap_settings = utils.IMAPSettings(**utils.load_yaml("creds.yml"))
-        except IOError:
-            print("Create a `creds.yml` file with the following keys: `imap_url`, `username`, `password`.")
-            exit(1)
+    # Use IMAP E-mail checking?
+    if args.use_imap_email is not None:
+        imap_settings = utils.IMAPSettings(**utils.load_yaml(args.use_imap_email))
         use_imap_email = True
     else:
         use_imap_email = False
