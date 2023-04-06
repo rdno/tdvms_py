@@ -102,6 +102,16 @@ def plot_stations(stations, fig=None, ax=None,
     return fig, ax
 
 
+def filter_stations_by_network(stations, networks):
+    """Filter stations by network"""
+    new_stations = []
+    for sta in stations:
+        if sta["network"] in networks:
+            new_stations.append(sta)
+
+    return new_stations
+
+
 def filter_stations_by_circle(stations, origin_latitude, origin_longitude,
                               min_dist_km, max_dist_km):
     """Filter stations in a circle defined by

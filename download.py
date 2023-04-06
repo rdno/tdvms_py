@@ -142,6 +142,8 @@ class DownloadConfig:
         self.validate_networks(use_cache)
         stations = get_stations([net["code"] for net in get_networks()],
                                 use_cache)
+        stations = tdvms.filter_stations_by_network(
+            stations, self.networks)
         if self.circle_selection:
             stations = tdvms.filter_stations_by_circle(
                 stations, *self.circle_selection)
