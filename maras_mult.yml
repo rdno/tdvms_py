@@ -1,0 +1,19 @@
+starttime:
+  - 2023-02-06 01:17:00
+  - 2023-02-06 10:24:00
+endtime:
+  - 2023-02-06 02:17:00
+  - 2023-02-06 11:24:00
+data_format:
+  - "mseed"
+  - "inventory"
+networks:
+  - "TK"
+selection:
+  circle:
+    latitude: 37.224
+    longitude: 37.4700
+    min_dist_km: 0
+    max_dist_km: 200
+
+batch_size: 50

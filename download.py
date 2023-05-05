@@ -107,10 +107,23 @@ class DownloadConfig:
         else:
             raise Exception("Malformed selection argument!")
 
-        if not isinstance(starttime, datetime.datetime):
-            raise Exception(f"starttime couldn't be parsed as date: {starttime}")  # NOQA
-        if not isinstance(endtime, datetime.datetime):
-            raise Exception(f"endtime couldn't be parsed as date: {endtime}")
+        if isinstance(starttime, list):
+            if not isinstance(endtime, list):
+                raise Exception("Both starttime and endtime should be list or datetime")
+            if len(starttime) != len(endtime):
+                raise Exception("Different number of starttime and endtime is provided")
+            for s, e in zip(starttime, endtime):
+                if not isinstance(s, datetime.datetime):
+                    raise Exception(f"starttime couldn't be parsed as date: {s}")
+                if not isinstance(e, datetime.datetime):
+                    raise Exception(f"endtime couldn't be parsed as date: {s}")
+        else:
+            if not isinstance(starttime, datetime.datetime):
+                raise Exception(f"starttime couldn't be parsed as date: {starttime}")  # NOQA
+            if not isinstance(endtime, datetime.datetime):
+                raise Exception(f"endtime couldn't be parsed as date: {endtime}")
+            starttime = [starttime]
+            endtime = [endtime]
         self.starttime = starttime
         self.endtime = endtime
 
@@ -162,17 +175,24 @@ class DownloadConfig:
         n_batches = len(batches)
         self.batch_data_formats = []
         self.batches = []
-        for f in self.data_format:
-            self.batch_data_formats.extend([f]*n_batches)
-            self.batches.extend(batches)
+        self.batch_starttimes = []
+        self.batch_endtimes = []
+        for s, e in zip(self.starttime, self.endtime):
+            for f in self.data_format:
+                self.batches.extend(batches)
+                self.batch_data_formats.extend([f]*n_batches)
+                self.batch_starttimes.extend([s]*n_batches)
+                self.batch_endtimes.extend([e]*n_batches)
 
     def plot_stations(self, *args, **kwargs):
         tdvms.plot_stations(self.stations, *args, **kwargs)
 
     def download(self, batch_id, email):
         tdvms.request_data(self.batches[batch_id],
-                           str(self.starttime), str(self.endtime),
-                           self.batch_data_formats[batch_id], email=email)
+                           self.batch_starttimes[batch_id],
+                           self.batch_endtimes[batch_id],
+                           self.batch_data_formats[batch_id],
+                           email=email)
 
 
 if __name__ == "__main__":
