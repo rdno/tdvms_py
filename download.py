@@ -205,6 +205,10 @@ if __name__ == "__main__":
                         help="Use IMAP to check your e-mails.")
     parser.add_argument("--refresh-stations", action="store_true",
                         help="Download stations even if a local copy exists.")
+    parser.add_argument("--wait-time", "-w", type=int, default=60,
+                        help="Wait time between requests in seconds.")
+    parser.add_argument("--n-check-email", type=int, default=10,
+                        help="Number of times e-mail account is checked.")
     args = parser.parse_args()
     filename = args.filename
     config = DownloadConfig(**utils.load_yaml(filename))
@@ -237,18 +241,19 @@ if __name__ == "__main__":
         use_imap_email = False
 
     while requested < n_batches:
-        if not use_imap_email:
-            print("")
-            input("Press enter to request the next batch! ")
-            print("")
         print("Requesting...")
         try:
             config.download(requested, args.email)
             requested += 1
             update_state(name, requested, filehash)
             if use_imap_email:
-                utils.check_imap_email(imap_settings)
+                utils.check_imap_email(imap_settings,
+                                       n_checks=args.n_check_email,
+                                       wait_in_seconds=args.wait_time)
+            else:
+                print(f"Waiting for {args.wait_time} seconds.")
+                time.sleep(args.wait_time)
         except tdvms.TDVMSException as e:
             print("ERROR occured:", e)
-            print("Waiting for a minute.")
-            time.sleep(60)
+            print(f"Waiting for {args.wait_time} seconds.")
+            time.sleep(args.wait_time)
