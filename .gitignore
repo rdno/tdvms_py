@@ -3,3 +3,5 @@
 *_state.yml
 creds.yml
 *.zip
+*.egg_info
+build

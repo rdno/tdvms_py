@@ -6,7 +6,7 @@ Ridvan Orsvuran, 2023
 """
 
 import tdvms
-import utils
+from tdvms import utils
 import argparse
 import datetime
 import os
@@ -195,7 +195,7 @@ class DownloadConfig:
                            email=email)
 
 
-if __name__ == "__main__":
+def download():
     parser = argparse.ArgumentParser(description="Download data")
     parser.add_argument("filename", help="config file")
     parser.add_argument("email", help="email address")
@@ -257,3 +257,7 @@ if __name__ == "__main__":
             print("ERROR occured:", e)
             print(f"Waiting for {args.wait_time} seconds.")
             time.sleep(args.wait_time)
+
+
+if __name__ == "__main__":
+    download()

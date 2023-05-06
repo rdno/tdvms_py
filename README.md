@@ -2,25 +2,37 @@
 
 Python scripts for downloading data from [AFAD TDVMS](https://tdvms.afad.gov.tr/continuous_data).
 
-You can find an example usage in `example.py`.
+## Install
 
-## Install required packages
+Install directly from github:
 
 ```console
-$ pip install -r requirements.txt
+$ pip install git+https://github.com/rdno/tdvms_py.git
 ```
 
-## Download Script (`download.py`)
+Or install for development:
+
+```console
+$ git clone https://github.com/rdno/tdvms_py.git
+$ cd tdvms_py
+$ pip install -e .
+```
+
+## Example Usage
+
+An Example script can be found in `example/example.py`
+
+## Download Script (`tdvms_download`)
 
 Download script attempts to ease the data request stage. Uses
 configuration file and keeps track of the progress. Example
-configuration file (`maras.yml`) requests 40 minutes seismograms from
+configuration file (`example/maras.yml`) requests 40 minutes seismograms from
 TK network stations within the 200 km of the epicenter.
 
 Usage:
 
 ```console
-$ ./download.py config_file.yml me@university.edu
+$ tdvms_dowload config_file.yml me@university.edu
 ```
 
 To avoid the possible bans, data requests are manual. Pressing enter
@@ -94,7 +106,7 @@ selection:
 You can also use `IMAP` to check your e-mail and download the linked
 zip file automatically using `utils.check_imap_email` function.
 
-`download.py` can also use this feature by using a yaml file which
+`tdvms_download` can also use this feature by using a yaml file which
 includes the login credentials (`--use-imap-email` flag).
 
 Example IMAP yaml file:

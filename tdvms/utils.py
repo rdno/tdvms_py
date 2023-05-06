@@ -39,6 +39,10 @@ class IMAPSettings:
         self.password = password
 
 
+class EmailParseException(Exception):
+    pass
+
+
 def check_imap_email(imap_settings, *,
                      n_checks=10, wait_in_seconds=30):
     """Checks an IMAP email for new messages from tdvms@afad.gov.tr
@@ -77,4 +81,4 @@ def download_zips_from_email(mailbox, num):
             with open(filename, "wb") as f:
                 f.write(requests.get(zip_url).content)
     else:
-        raise Exception(f"Link couldn't be found in the message {html.unescape(txt)}")
+        raise EmailParseException(f"Link couldn't be found in the message {html.unescape(txt)}")
