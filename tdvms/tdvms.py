@@ -6,6 +6,7 @@ https://tdvms.afad.gov.tr/continuous_data
 Ridvan Orsvuran, 2023
 """
 
+import datetime
 import json
 import requests
 
@@ -208,6 +209,11 @@ def request_data(stations, starttime, endtime, data_type, email):
     components = [["Z", "N", "E"] for sta in stations]
     if data_type not in data_types:
         raise Exception(f"data_type should one of {data_types}.")
+
+    if isinstance(starttime, datetime.datetime):
+        starttime = starttime.strftime("%Y-%m-%d %H:%M:%S")
+    if isinstance(endtime, datetime.datetime):
+        endtime = endtime.strftime("%Y-%m-%d %H:%M:%S")
 
     data = {"start_time": starttime,
             "end_time":  endtime,
