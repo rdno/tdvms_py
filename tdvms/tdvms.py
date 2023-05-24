@@ -228,7 +228,7 @@ def request_data(stations, starttime, endtime, data_type, email, timeout=None):
 
     try:
         r = requests.post("https://tdvmservis.afad.gov.tr/GetData",
-                          json=data, timeout=None)
+                          json=data, timeout=timeout)
     except requests.exceptions.Timeout:
         print("Request timed out!")
 
