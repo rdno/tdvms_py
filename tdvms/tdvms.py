@@ -231,6 +231,7 @@ def request_data(stations, starttime, endtime, data_type, email, timeout=None):
                           json=data, timeout=timeout)
     except requests.exceptions.Timeout:
         print("Request timed out!")
+        return
 
     if r.status_code == 200:
         # print("Response:")
