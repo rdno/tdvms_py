@@ -187,12 +187,13 @@ class DownloadConfig:
     def plot_stations(self, *args, **kwargs):
         tdvms.plot_stations(self.stations, *args, **kwargs)
 
-    def download(self, batch_id, email):
+    def download(self, batch_id, email, timeout=None):
         tdvms.request_data(self.batches[batch_id],
                            self.batch_starttimes[batch_id],
                            self.batch_endtimes[batch_id],
                            self.batch_data_formats[batch_id],
-                           email=email)
+                           email=email,
+                           timeout=timeout)
 
 
 def download():
@@ -209,6 +210,8 @@ def download():
                         help="Wait time between requests in seconds.")
     parser.add_argument("--n-check-email", type=int, default=10,
                         help="Number of times e-mail account is checked.")
+    parser.add_argument("--request-timeout", type=int, default=None, nargs="?",
+                        help="Timeout setting for the request")
     args = parser.parse_args()
     filename = args.filename
     config = DownloadConfig(**utils.load_yaml(filename))
@@ -243,7 +246,7 @@ def download():
     while requested < n_batches:
         print("Requesting...")
         try:
-            config.download(requested, args.email)
+            config.download(requested, args.email, timeout=args.request_timeout)
             requested += 1
             update_state(name, requested, filehash)
             if use_imap_email:

@@ -184,7 +184,7 @@ def split_into_batches(stations, batch_size=50):
             for i in range(n)]
 
 
-def request_data(stations, starttime, endtime, data_type, email):
+def request_data(stations, starttime, endtime, data_type, email, timeout=None):
     """Request data by e-mail
 
     time format %Y-%m-%d %H:%M:%S
@@ -226,8 +226,11 @@ def request_data(stations, starttime, endtime, data_type, email):
             "components": components,
             "e_mail": email}
 
-    r = requests.post("https://tdvmservis.afad.gov.tr/GetData",
-                      json=data)
+    try:
+        r = requests.post("https://tdvmservis.afad.gov.tr/GetData",
+                          json=data, timeout=None)
+    except requests.exceptions.Timeout:
+        print("Request timed out!")
 
     if r.status_code == 200:
         # print("Response:")
