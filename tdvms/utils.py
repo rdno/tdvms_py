@@ -47,6 +47,8 @@ def check_imap_email(imap_settings, *,
                      n_checks=10, wait_in_seconds=30):
     """Checks an IMAP email for new messages from tdvms@afad.gov.tr
     and attempts to find the link for the zip file and download it."""
+    download_links = []
+
     mailbox = imaplib.IMAP4_SSL(imap_settings.url)
     mailbox.login(imap_settings.username, imap_settings.password)
     while n_checks > 0:
@@ -60,25 +62,30 @@ def check_imap_email(imap_settings, *,
             n_checks -= 1
         else:
             for num in reversed(mails):
-                download_zips_from_email(mailbox, num)
+                link = get_download_link_from_email(mailbox, num)
+                if link:
+                    download_links.append(link)
             break
 
     mailbox.close()
     mailbox.logout()
 
-
-def download_zips_from_email(mailbox, num):
-    typ, data = mailbox.fetch(num, '(RFC822)')
-    msg = email.message_from_bytes(data[0][1])
-    txt = msg.get_payload(None, True).decode()
-    if m := re.search("https://tdvms.afad.gov.tr/files/[a-zA-Z0-9_]+.zip", txt):
-        zip_url = m.group(0)
-        filename = zip_url.split("/")[-1]
+    for link in download_links:
+        filename = link.split("/")[-1]
         if os.path.isfile(filename):
             print(f"Already downloaded: {filename}")
         else:
             print(f"Downloading {filename}...")
             with open(filename, "wb") as f:
-                f.write(requests.get(zip_url).content)
+                f.write(requests.get(link).content)
+
+
+def get_download_link_from_email(mailbox, num):
+    typ, data = mailbox.fetch(num, '(RFC822)')
+    msg = email.message_from_bytes(data[0][1])
+    txt = msg.get_payload(None, True).decode()
+    if m := re.search("https://tdvms.afad.gov.tr/files/[a-zA-Z0-9_]+.zip", txt):
+        zip_url = m.group(0)
+        return zip_url
     else:
         raise EmailParseException(f"Link couldn't be found in the message {html.unescape(txt)}")
