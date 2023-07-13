@@ -39,6 +39,22 @@ class IMAPSettings:
         self.password = password
 
 
+class IMAPMailBox:
+    def __init__(self, settings):
+        self.settings = settings
+        self.mailbox = None
+
+    def __enter__(self):
+        self.mailbox = imaplib.IMAP4_SSL(self.settings.url)
+        self.mailbox.login(self.settings.username,
+                           self.settings.password)
+        return self.mailbox
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.mailbox.close()
+        self.mailbox.logout()
+
+
 class EmailParseException(Exception):
     pass
 
@@ -49,26 +65,22 @@ def check_imap_email(imap_settings, *,
     and attempts to find the link for the zip file and download it."""
     download_links = []
 
-    mailbox = imaplib.IMAP4_SSL(imap_settings.url)
-    mailbox.login(imap_settings.username, imap_settings.password)
     while n_checks > 0:
-        mailbox.select("Inbox")
-        typ, data = mailbox.search(None, "UNSEEN", "FROM", '"tdvms@afad.gov.tr"')
-        mails = data[0].split()
-        n_messages = len(mails)
-        if n_messages == 0:
-            print(f"No email found. Waiting for {wait_in_seconds} seconds")
-            time.sleep(wait_in_seconds)
-            n_checks -= 1
-        else:
-            for num in reversed(mails):
-                link = get_download_link_from_email(mailbox, num)
-                if link:
-                    download_links.append(link)
-            break
-
-    mailbox.close()
-    mailbox.logout()
+        with IMAPMailBox(imap_settings) as mailbox:
+            mailbox.select("Inbox")
+            typ, data = mailbox.search(None, "UNSEEN", "FROM", '"tdvms@afad.gov.tr"')
+            mails = data[0].split()
+            n_messages = len(mails)
+            if n_messages == 0:
+                print(f"No email found. Waiting for {wait_in_seconds} seconds")
+                n_checks -= 1
+            else:
+                for num in reversed(mails):
+                    link = get_download_link_from_email(mailbox, num)
+                    if link:
+                        download_links.append(link)
+                break
+        time.sleep(wait_in_seconds)
 
     for link in download_links:
         filename = link.split("/")[-1]
