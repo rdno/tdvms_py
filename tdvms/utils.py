@@ -32,6 +32,14 @@ def dump_yaml(filename, data):
         yaml.safe_dump(data, f)
 
 
+def wait(seconds):
+    try:
+        time.sleep(seconds)
+    except KeyboardInterrupt:
+        # You should be able still halt the program, if you hit Ctrl-C twice.
+        time.sleep(0.5)
+
+
 class IMAPSettings:
     def __init__(self, imap_url, username, password):
         self.url = imap_url
@@ -80,7 +88,7 @@ def check_imap_email(imap_settings, *,
                     if link:
                         download_links.append(link)
                 break
-        time.sleep(wait_in_seconds)
+        wait(wait_in_seconds)
 
     for link in download_links:
         filename = link.split("/")[-1]

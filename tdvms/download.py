@@ -11,7 +11,6 @@ import argparse
 import datetime
 import os
 import hashlib
-import time
 
 
 def check_cur_state(name, filehash):
@@ -255,11 +254,11 @@ def download():
                                        wait_in_seconds=args.wait_time)
             else:
                 print(f"Waiting for {args.wait_time} seconds.")
-                time.sleep(args.wait_time)
+                utils.wait(args.wait_time)
         except tdvms.TDVMSException as e:
             print("ERROR occured:", e)
             print(f"Waiting for {args.wait_time} seconds.")
-            time.sleep(args.wait_time)
+            utils.wait(args.wait_time)
 
 
 if __name__ == "__main__":
