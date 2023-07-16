@@ -33,6 +33,7 @@ packages = ["tdvms"]
 
 [project.scripts]
 tdvms_download = "tdvms.download:download"
+tdvms_check_zipfiles = "tdvms.check_zipfiles:check_zipfiles_command"
 
 [tool.setuptools.dynamic]
 version = {attr = "tdvms.VERSION"}
