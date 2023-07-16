@@ -232,6 +232,8 @@ def request_data(stations, starttime, endtime, data_type, email, timeout=None):
     except requests.exceptions.Timeout:
         print("Request timed out!")
         return
+    except requests.exceptions.ConnectionError:
+        raise TDVMSException("Connection Aborted!")
 
     if r.status_code == 200:
         # print("Response:")
